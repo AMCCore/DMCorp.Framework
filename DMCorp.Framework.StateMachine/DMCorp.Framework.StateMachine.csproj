@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>DMCorp.Framework.StateMachine</PackageId>
+    <Authors>Albert Shtradman</Authors>
+    <Company>DMCorp</Company>
+    <Product>DMCorp.Framework</Product>
+    <PackageIcon>LogoBigYoutube.jpg</PackageIcon>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\LogoBigYoutube.jpg">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DMCorp.Framework.Basics\DMCorp.Framework.Basics.csproj" />
+  </ItemGroup>
+
+</Project>
