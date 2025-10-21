@@ -1,0 +1,25 @@
+name: Build - Pack - Push to NuGet
+
+on:
+  push:
+    branches: [ "master" ]
+    tags: ['v*.*.*']
+  pull_request:
+    branches: [ "master" ]
+    types: ["closed"]
+    tags: ['v*.*.*']
+
+jobs:
+  build-and-publish:
+    permissions:
+      contents: read
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: dotnet pack
+        run: dotnet pack
+        # dotnet pack -r win-x64
