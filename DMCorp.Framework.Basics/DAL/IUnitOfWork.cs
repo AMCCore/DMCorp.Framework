@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DMCorp.Framework.Basics.DAL;
 
@@ -7,7 +6,8 @@ public interface IUnitOfWork : IDisposable
 {
     bool NotChangeLastUpdateTick { get; set; }
 
-    //DbContext Context { get; }
+    DbContext Context { get; }
+
     //IDbContextTransaction? Transaction { get; }
 
     void AutoDetectChangesDisable();

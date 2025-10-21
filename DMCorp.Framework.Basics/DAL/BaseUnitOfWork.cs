@@ -6,12 +6,11 @@ namespace DMCorp.Framework.Basics.DAL;
 
 public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbContext
 {
-    private C Context = context ?? throw new ArgumentNullException(nameof(context));
+    public DbContext Context => context ?? throw new ArgumentNullException(nameof(context));
+
     private IDbContextTransaction? _transaction = null;
 
     public bool NotChangeLastUpdateTick { get; set; }
-
-    //DbContext IUnitOfWork.Context => _context;
 
     public void AutoDetectChangesDisable()
     {
@@ -81,7 +80,7 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
     {
         _transaction?.Dispose();
         Context?.Dispose();
-        Context = null;
+        //Context = null;
         GC.SuppressFinalize(this);
     }
 
