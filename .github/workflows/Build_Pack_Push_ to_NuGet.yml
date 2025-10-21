@@ -3,7 +3,7 @@ name: Build - Pack - Push to NuGet
 on:
   push:
     branches: [ "master" ]
-    #tags: ['v*.*.*']
+    tags: ['v*.*.*']
   pull_request:
     branches: [ "master" ]
     types: ["closed"]
