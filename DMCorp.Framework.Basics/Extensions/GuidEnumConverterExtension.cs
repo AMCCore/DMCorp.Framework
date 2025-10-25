@@ -10,7 +10,7 @@ public class GuidEnumConverterExtension<TEnum>(ConverterMappingHints? mappingHin
 
     protected static Expression<Func<Guid, TEnum>> ToEnum() => v => ConvertGuidToEnum<TEnum>(v);
 
-    public static T ConvertGuidToEnum<T>(Guid value)
+    public static T ConvertGuidToEnum<T>(Guid value) where T : Enum
     {
         var names = Enum.GetNames(typeof(T));
         foreach (var name in names)
