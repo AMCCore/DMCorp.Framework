@@ -22,7 +22,7 @@ public class DbStateMachineState : IEntityBase, ISoftDeleteEntity, IEntityWithDa
     public Guid StateMachineId { get; set; }
 
     [Required]
-    public string Name { get; set; }
+    public required string Name { get; set; }
 
     public string? Description { get; set; }
 

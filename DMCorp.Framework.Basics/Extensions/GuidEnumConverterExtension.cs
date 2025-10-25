@@ -10,17 +10,17 @@ public class GuidEnumConverterExtension<TEnum>(ConverterMappingHints? mappingHin
 
     protected static Expression<Func<Guid, TEnum>> ToEnum() => v => ConvertGuidToEnum<TEnum>(v);
 
-    public static TEnum ConvertGuidToEnum<TEnum>(Guid value)
+    public static T ConvertGuidToEnum<T>(Guid value)
     {
-        var names = Enum.GetNames(typeof(TEnum));
+        var names = Enum.GetNames(typeof(T));
         foreach (var name in names)
         {
-            var val = typeof(TEnum).GetField(name).GetCustomAttributes(true).OfType<EnumGuidAttribute>()
+            var val = typeof(T)?.GetField(name)?.GetCustomAttributes(true).OfType<EnumGuidAttribute>()
                 .Select(ss => ss.Guid)
                 .FirstOrDefault();
             if (val == value)
             {
-                return (TEnum)Enum.Parse(typeof(TEnum), name);
+                return (T)Enum.Parse(typeof(T), name);
             }
         }
 

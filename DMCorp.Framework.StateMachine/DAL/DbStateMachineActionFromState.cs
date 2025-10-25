@@ -29,11 +29,11 @@ public class DbStateMachineActionFromState : IEntityBase, IEntityWithDateCreated
     [ForeignKey(nameof(StateMachineAction))]
     public Guid StateMachineActionId { get; set; }
 
-    public virtual DbStateMachineAction StateMachineAction { get; set; }
+    public virtual required DbStateMachineAction StateMachineAction { get; set; }
 
     [Required]
     [ForeignKey(nameof(StateMachineState))]
     public Guid StateMachineStateId { get; set; }
 
-    public virtual DbStateMachineState StateMachineState { get; set; }
+    public virtual required DbStateMachineState StateMachineState { get; set; }
 }
