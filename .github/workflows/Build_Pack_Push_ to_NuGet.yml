@@ -21,11 +21,11 @@ jobs:
       contents: read
     runs-on: windows-latest
     steps:
-      - name: Exit if not on master branch
-        if: endsWith(github.ref, 'master') == false
-        run: |
-              echo $"{{ github.ref }}"
-              exit -1
+#      - name: Exit if not on master branch
+#        if: endsWith(github.ref, 'master') == false
+#        run: |
+#              echo $"{{ github.ref }}"
+#              exit -1
 
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
