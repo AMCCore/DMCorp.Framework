@@ -23,7 +23,9 @@ jobs:
     steps:
       - name: Exit if not on master branch
         if: endsWith(github.ref, 'master') == false
-        run: exit -1
+        run: |
+              echo $"{{ github.ref }}"
+              exit -1
 
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
