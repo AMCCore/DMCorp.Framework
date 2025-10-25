@@ -25,14 +25,14 @@ public class DbStateMachineAction : IEntityBase, ISoftDeleteEntity, IEntityWithD
     public Guid StateMachineId { get; set; }
 
     [Required]
-    public string ActionName { get; set; }
+    public required string ActionName { get; set; }
 
     public string? Description { get; set; }
 
     public string? ConfirmText { get; set; }
 
     [Required]
-    public string ActionCode { get; set; }
+    public required string ActionCode { get; set; }
 
     public bool IsSystemAction { get; set; } = false;
 
