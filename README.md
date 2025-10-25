@@ -1,1 +1,1 @@
-# DMCorp.Framework Release v1.0.2
+# DMCorp.Framework Release v1.0.3
