@@ -189,7 +189,7 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
         return GetSet<T>().AsQueryable();
     }
 
-    private void ProcessEntityOnSave(bool hardDelete)
+    protected virtual void ProcessEntityOnSave(bool hardDelete)
     {
         var states = new EntityState[] { EntityState.Added, EntityState.Modified };
 
@@ -215,7 +215,7 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
 
         foreach (var entity in entitystoCreate)
         {
-            entity.DateCreated = DateTimeOffset.Now;
+            entity.DateCreated = SetDateTimeNow();
         }
 
         if (NotChangeLastUpdateTick)
@@ -232,7 +232,12 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
         // фиксация факта изменений
         foreach (var entity in entitys)
         {
-            entity.LastUpdateTick = DateTimeOffset.Now.Ticks;
+            entity.LastUpdateTick = SetDateTimeNow().Ticks;
         }
+    }
+
+    protected virtual DateTimeOffset SetDateTimeNow()
+    {
+        return DateTimeOffset.Now;
     }
 }
