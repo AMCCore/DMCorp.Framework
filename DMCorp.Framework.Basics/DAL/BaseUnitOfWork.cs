@@ -191,7 +191,7 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
 
     protected virtual void ProcessEntityOnSave(bool hardDelete)
     {
-        var states = new EntityState[] { EntityState.Added, EntityState.Modified };
+        var states = new [] { EntityState.Added, EntityState.Modified };
 
         if (!hardDelete)
         {
