@@ -15,8 +15,10 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <RepositoryUrl>https://github.com/AMCCore/DMCorp.Framework</RepositoryUrl>
     <PackageTags>c# .net</PackageTags>
-    <Version>1.0.3</Version>
+    <Version>1.0.4</Version>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <AssemblyVersion>1.0.4</AssemblyVersion>
+    <FileVersion>1.0.4</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

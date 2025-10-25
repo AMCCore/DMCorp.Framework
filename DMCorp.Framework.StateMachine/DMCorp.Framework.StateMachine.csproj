@@ -15,7 +15,7 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/AMCCore/DMCorp.Framework</RepositoryUrl>
 		<PackageTags>c# .net statemachine</PackageTags>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 	</PropertyGroup>
 
