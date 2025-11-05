@@ -9,6 +9,11 @@ namespace DMCorp.Framework.Basics.Security;
 /// </summary>
 public class BasicTokenValidator(ISecurityTokenValidator securityTokenValidator) : ITokenValidator
 {
+    /// <summary>
+    /// Проверяет валидность токена авторизации
+    /// </summary>
+    /// <param name="token">Токен для проверки</param>
+    /// <returns>True, если токен валиден, иначе false</returns>
     public bool IsTokenValid(string token)
     {
         var mySecret = Encoding.UTF8.GetBytes(BaseAppSettings.SecKey);

@@ -1,5 +1,8 @@
 ﻿namespace DMCorp.Framework.Basics.Security;
 
+/// <summary>
+/// Интерфейс сервиса безопасности для работы с текущим пользователем
+/// </summary>
 public interface ISecurityService
 {
     /// <summary>
