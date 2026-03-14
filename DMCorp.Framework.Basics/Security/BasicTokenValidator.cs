@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using DMCorp.Framework.Basics.Settings;
 using Microsoft.IdentityModel.Tokens;
 
@@ -9,6 +9,10 @@ namespace DMCorp.Framework.Basics.Security;
 /// </summary>
 public class BasicTokenValidator(ISecurityTokenValidator securityTokenValidator) : ITokenValidator
 {
+    /// <summary>
+    /// Создает стандартные параметры валидации токена с настройками из переменных окружения
+    /// </summary>
+    /// <returns>Basic TokenValidationParameters for DMCorp</returns>
     public static TokenValidationParameters GetBasicTokenValidationParameters()
     {
         var mySecret = Encoding.UTF8.GetBytes(BaseAppSettings.SecKey);

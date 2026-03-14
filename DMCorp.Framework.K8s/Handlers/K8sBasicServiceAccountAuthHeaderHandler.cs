@@ -1,4 +1,4 @@
-﻿using DMCorp.Framework.K8s.Helpers;
+using DMCorp.Framework.K8s.Helpers;
 using k8s;
 using k8s.Models;
 using Microsoft.Extensions.Caching.Memory;
@@ -6,12 +6,33 @@ using Microsoft.Extensions.Logging;
 
 namespace DMCorp.Framework.K8s.Handlers;
 
+/// <summary>
+/// Обработчик HTTP-запросов для добавления заголовка авторизации с токеном сервисного аккаунта Kubernetes.
+/// Поддерживает кэширование токена для оптимизации производительности.
+/// </summary>
 public class K8sBasicServiceAccountAuthHeaderHandler(ILogger<K8sBasicServiceAccountAuthHeaderHandler>? logger = default, IMemoryCache? cache = default) : DelegatingHandler
 {
+    /// <summary>
+    /// Кэш для хранения токена
+    /// </summary>
     private readonly IMemoryCache? _cache = cache;
+
+    /// <summary>
+    /// Ключ кэша для хранения токена
+    /// </summary>
     private const string TokenCacheKey = "K8sTokenCache";
+
+    /// <summary>
+    /// Ключ кэша для хранения времени истечения токена
+    /// </summary>
     private const string TokenCacheExpirationKey = "K8sTokenExpirationCache";
 
+    /// <summary>
+    /// Получает токен авторизации Kubernetes для сервисного аккаунта.
+    /// Токен кэшируется для повторного использования до истечения срока действия.
+    /// </summary>
+    /// <param name="token">Токен отмены операции</param>
+    /// <returns>Строка токена авторизации</returns>
     private async Task<string> GetK8sToken(CancellationToken token = default)
     {
         if ((_cache?.TryGetValue(TokenCacheKey, out string? _token) ?? false) && (_cache?.TryGetValue(TokenCacheExpirationKey, out DateTimeOffset? _tokenExpires) ?? false) && !string.IsNullOrWhiteSpace(_token) && _tokenExpires < DateTimeOffset.UtcNow )
