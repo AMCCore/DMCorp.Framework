@@ -10,7 +10,7 @@ namespace DMCorp.Framework.K8s.Handlers;
 /// Обработчик HTTP-запросов для добавления заголовка авторизации с токеном сервисного аккаунта Kubernetes.
 /// Поддерживает кэширование токена для оптимизации производительности.
 /// </summary>
-public class K8sBasicServiceAccountAuthHeaderHandler(ILogger<K8sBasicServiceAccountAuthHeaderHandler>? logger = default, IMemoryCache? cache = default) : DelegatingHandler
+public class K8sBasicServiceAccountAuthHeaderHandler(IMemoryCache? cache = default) : DelegatingHandler
 {
     /// <summary>
     /// Кэш для хранения токена
