@@ -5,16 +5,16 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-		<PackageId>DMCorp.Framework.Basics</PackageId>
+		<PackageId>DMCorp.Framework.K8s</PackageId>
 		<Authors>Albert Shtradman</Authors>
 		<Company>DMCorp</Company>
 		<Product>DMCorp.Framework</Product>
 		<PackageIcon>LogoBigYoutube.jpg</PackageIcon>
-		<Title>DMCorp.Framework.Basics</Title>
+		<Title>DMCorp.Framework.K8s</Title>
 		<PackageProjectUrl>https://github.com/AMCCore/DMCorp.Framework</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/AMCCore/DMCorp.Framework</RepositoryUrl>
-		<PackageTags>c# .net</PackageTags>
+		<PackageTags>c# .net k8s kubernetes</PackageTags>
 		<Version>1.1.0.0</Version>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<AssemblyVersion>1.1.0.0</AssemblyVersion>
@@ -22,24 +22,26 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\LICENSE">
-			<Pack>True</Pack>
+		<None Include="..\LICENSE" Link="LICENSE">
 			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
 		</None>
-		<None Include="..\LogoBigYoutube.jpg">
-			<Pack>True</Pack>
+		<None Include="..\LogoBigYoutube.jpg" Link="LogoBigYoutube.jpg">
 			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
 		</None>
-		<None Include="..\README.md">
-			<Pack>True</Pack>
+		<None Include="..\README.md" Link="README.md">
 			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
 		</None>
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.10" />
-		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="10.0.5" />
-		<PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.14.0" />
+		<PackageReference Include="KubernetesClient" Version="19.0.2" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\DMCorp.Framework.Basics\DMCorp.Framework.Basics.csproj" />
 	</ItemGroup>
 
 </Project>
