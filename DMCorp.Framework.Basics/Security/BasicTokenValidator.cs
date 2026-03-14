@@ -12,7 +12,7 @@ public class BasicTokenValidator(ISecurityTokenValidator securityTokenValidator)
     /// <summary>
     /// Создает стандартные параметры валидации токена с настройками из переменных окружения
     /// </summary>
-    /// <returns>Basic TokenValidationParameters for DMCorp</returns>
+    /// <returns>Параметры валидации токена безопасности</returns>
     public static TokenValidationParameters GetBasicTokenValidationParameters()
     {
         var mySecret = Encoding.UTF8.GetBytes(BaseAppSettings.SecKey);
@@ -31,15 +31,22 @@ public class BasicTokenValidator(ISecurityTokenValidator securityTokenValidator)
     }
 
     /// <summary>
+    /// Возвращает параметры валидации токена. Может быть переопределен в наследниках.
+    /// </summary>
+    /// <returns>Параметры валидации токена безопасности</returns>
+    protected virtual TokenValidationParameters GetTokenValidationParameters() => GetBasicTokenValidationParameters();
+
+
+    /// <summary>
     /// Проверяет валидность токена авторизации
     /// </summary>
     /// <param name="token">Токен для проверки</param>
     /// <returns>True, если токен валиден, иначе false</returns>
-    public bool IsTokenValid(string token)
+    public virtual bool IsTokenValid(string token)
     {
         try
         {
-            securityTokenValidator.ValidateToken(token, GetBasicTokenValidationParameters(), out SecurityToken validatedToken);
+            securityTokenValidator.ValidateToken(token, GetTokenValidationParameters(), out SecurityToken validatedToken);
         }
         catch
         {
