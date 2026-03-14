@@ -21,11 +21,11 @@ public class BasicTokenValidator(ISecurityTokenValidator securityTokenValidator)
 
         return new TokenValidationParameters
         {
-            ValidateIssuerSigningKey = true,
             ValidateIssuer = true,
-            ValidateAudience = true,
             ValidIssuer = BaseAppSettings.ISSUER,
+            ValidateAudience = true,
             ValidAudience = BaseAppSettings.AUDIENCE,
+            ValidateIssuerSigningKey = true,
             IssuerSigningKey = mySecurityKey,
         };
     }
