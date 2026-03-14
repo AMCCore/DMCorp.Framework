@@ -1,28 +1,47 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net9.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<PackageId>DMCorp.Framework.K8s</PackageId>
+		<Authors>Albert Shtradman</Authors>
+		<Company>DMCorp</Company>
+		<Product>DMCorp.Framework</Product>
+		<PackageIcon>LogoBigYoutube.jpg</PackageIcon>
+		<Title>DMCorp.Framework.K8s</Title>
+		<PackageProjectUrl>https://github.com/AMCCore/DMCorp.Framework</PackageProjectUrl>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<RepositoryUrl>https://github.com/AMCCore/DMCorp.Framework</RepositoryUrl>
+		<PackageTags>c# .net k8s kubernetes</PackageTags>
+		<Version>1.1.0.0</Version>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<AssemblyVersion>1.1.0.0</AssemblyVersion>
+		<FileVersion>1.1.0.0</FileVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <None Include="..\LICENSE" Link="LICENSE">
-      <PackagePath>\</PackagePath>
-      <Pack>True</Pack>
-    </None>
-    <None Include="..\README.md" Link="README.md">
-      <PackagePath>\</PackagePath>
-      <Pack>True</Pack>
-    </None>
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\LICENSE" Link="LICENSE">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+		<None Include="..\LogoBigYoutube.jpg" Link="LogoBigYoutube.jpg">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+		<None Include="..\README.md" Link="README.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+	</ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="KubernetesClient" Version="19.0.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="KubernetesClient" Version="19.0.2" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\DMCorp.Framework.Basics\DMCorp.Framework.Basics.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\DMCorp.Framework.Basics\DMCorp.Framework.Basics.csproj" />
+	</ItemGroup>
 
 </Project>
