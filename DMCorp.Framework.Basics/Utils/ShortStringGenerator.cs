@@ -10,10 +10,10 @@ public static class ShortStringGenerator
     private static readonly Random random = new();
 
     /// <summary>
-    /// Генерирует случайный набор букв заданной длины
+    /// Генерирует случайный набор строчных латинских букв заданной длины
     /// </summary>
-    /// <param name="num"></param>
-    /// <returns></returns>
+    /// <param name="num">Длина генерируемой строки (по умолчанию 6)</param>
+    /// <returns>Случайная строка из строчных латинских букв</returns>
     public static string Generate(short num = 6)
     {
         char[] possibleCharsArray = possibleChars.ToCharArray();

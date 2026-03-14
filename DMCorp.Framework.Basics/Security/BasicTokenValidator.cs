@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using DMCorp.Framework.Basics.Settings;
 using Microsoft.IdentityModel.Tokens;
 
@@ -9,22 +9,44 @@ namespace DMCorp.Framework.Basics.Security;
 /// </summary>
 public class BasicTokenValidator(ISecurityTokenValidator securityTokenValidator) : ITokenValidator
 {
-    public bool IsTokenValid(string token)
+    /// <summary>
+    /// Создает стандартные параметры валидации токена с настройками из переменных окружения
+    /// </summary>
+    /// <returns>Параметры валидации токена безопасности</returns>
+    public static TokenValidationParameters GetBasicTokenValidationParameters()
     {
         var mySecret = Encoding.UTF8.GetBytes(BaseAppSettings.SecKey);
         var mySecurityKey = new SymmetricSecurityKey(mySecret);
 
+
+        return new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidIssuer = BaseAppSettings.ISSUER,
+            ValidateAudience = true,
+            ValidAudience = BaseAppSettings.AUDIENCE,
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKey = mySecurityKey,
+        };
+    }
+
+    /// <summary>
+    /// Возвращает параметры валидации токена. Может быть переопределен в наследниках.
+    /// </summary>
+    /// <returns>Параметры валидации токена безопасности</returns>
+    protected virtual TokenValidationParameters GetTokenValidationParameters() => GetBasicTokenValidationParameters();
+
+
+    /// <summary>
+    /// Проверяет валидность токена авторизации
+    /// </summary>
+    /// <param name="token">Токен для проверки</param>
+    /// <returns>True, если токен валиден, иначе false</returns>
+    public virtual bool IsTokenValid(string token)
+    {
         try
         {
-            securityTokenValidator.ValidateToken(token, new TokenValidationParameters
-            {
-                ValidateIssuerSigningKey = true,
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidIssuer = BaseAppSettings.ISSUER,
-                ValidAudience = BaseAppSettings.AUDIENCE,
-                IssuerSigningKey = mySecurityKey,
-            }, out SecurityToken validatedToken);
+            securityTokenValidator.ValidateToken(token, GetTokenValidationParameters(), out SecurityToken validatedToken);
         }
         catch
         {

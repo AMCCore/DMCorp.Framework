@@ -3,8 +3,17 @@ using System.ComponentModel;
 
 namespace DMCorp.Framework.Basics.Extensions;
 
+/// <summary>
+/// Расширения для работы с перечислениями
+/// </summary>
 public static class EnumExtension
 {
+    /// <summary>
+    /// Получает GUID значение, связанное с элементом перечисления через атрибут EnumGuidAttribute
+    /// </summary>
+    /// <param name="e">Элемент перечисления</param>
+    /// <returns>GUID значение, связанное с элементом перечисления, или Guid.Empty, если атрибут не найден</returns>
+    /// <exception cref="Exception">Выбрасывается, если имя элемента перечисления не распознано</exception>
     public static Guid GetEnumGuid(this Enum e)
     {
         var enumType = e.GetType();
@@ -13,6 +22,12 @@ public static class EnumExtension
         return res;
     }
 
+    /// <summary>
+    /// Получает описание элемента перечисления из атрибута DescriptionAttribute
+    /// </summary>
+    /// <param name="e">Элемент перечисления</param>
+    /// <returns>Описание элемента перечисления или null, если атрибут не найден</returns>
+    /// <exception cref="Exception">Выбрасывается, если имя элемента перечисления не распознано</exception>
     public static string? GetEnumDescription(this Enum e)
     {
         var enumType = e.GetType();

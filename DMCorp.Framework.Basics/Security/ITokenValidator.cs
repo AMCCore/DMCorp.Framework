@@ -6,7 +6,9 @@
 public interface ITokenValidator
 {
     /// <summary>
-    /// Валидация токена
+    /// Проверяет валидность токена авторизации
     /// </summary>
+    /// <param name="token">Токен для проверки</param>
+    /// <returns>True, если токен валиден, иначе false</returns>
     bool IsTokenValid(string token);
 }

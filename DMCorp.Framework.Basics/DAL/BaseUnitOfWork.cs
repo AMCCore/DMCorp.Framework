@@ -4,24 +4,44 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace DMCorp.Framework.Basics.DAL;
 
+/// <summary>
+/// Базовый класс для реализации паттерна Unit of Work с поддержкой транзакций и операций с базой данных
+/// </summary>
+/// <typeparam name="C">Тип контекста базы данных, наследующий DbContext</typeparam>
 public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbContext
 {
+    /// <summary>
+    /// Контекст базы данных Entity Framework
+    /// </summary>
     public DbContext Context => context ?? throw new ArgumentNullException(nameof(context));
 
     private IDbContextTransaction? _transaction = null;
 
+    /// <summary>
+    /// Флаг, указывающий, что не нужно изменять LastUpdateTick при сохранении
+    /// </summary>
     public bool NotChangeLastUpdateTick { get; set; }
 
+    /// <summary>
+    /// Отключает автоматическое отслеживание изменений в контексте
+    /// </summary>
     public void AutoDetectChangesDisable()
     {
         Context.ChangeTracker.AutoDetectChangesEnabled = false;
     }
 
+    /// <summary>
+    /// Включает автоматическое отслеживание изменений в контексте
+    /// </summary>
     public void AutoDetectChangesEnable()
     {
         Context.ChangeTracker.AutoDetectChangesEnabled = true;
     }
 
+    /// <summary>
+    /// Начинает транзакцию базы данных
+    /// </summary>
+    /// <exception cref="Exception">Выбрасывается, если транзакция уже была начата</exception>
     public void BeginTransaction()
     {
         if (_transaction != null)
@@ -32,6 +52,11 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
         _transaction = Context.Database.BeginTransaction();
     }
 
+    /// <summary>
+    /// Асинхронно начинает транзакцию базы данных
+    /// </summary>
+    /// <param name="token">Токен отмены операции</param>
+    /// <exception cref="Exception">Выбрасывается, если транзакция уже была начата</exception>
     public async Task BeginTransactionAsync(CancellationToken token = default)
     {
         if (_transaction != null)
@@ -43,7 +68,7 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
     }
 
     /// <summary>
-    /// Commits transaction. <b>Warning!</b> Save changes is not included! 
+    /// Подтверждает транзакцию. <b>Внимание!</b> Сохранение изменений не включено!
     /// </summary>
     public void Commit()
     {
@@ -51,8 +76,9 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
     }
 
     /// <summary>
-    /// Commits transaction. <b>Warning!</b> Save changes is not included! 
+    /// Асинхронно подтверждает транзакцию. <b>Внимание!</b> Сохранение изменений не включено!
     /// </summary>
+    /// <param name="token">Токен отмены операции</param>
     public async Task CommitAsync(CancellationToken token = default)
     {
         if (_transaction != null)
@@ -60,7 +86,7 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
     }
 
     /// <summary>
-    /// Rollback transaction
+    /// Откатывает транзакцию
     /// </summary>
     public void Rollback()
     {
@@ -68,14 +94,18 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
     }
 
     /// <summary>
-    /// Rollback transaction
+    /// Асинхронно откатывает транзакцию
     /// </summary>
+    /// <param name="token">Токен отмены операции</param>
     public async Task RollbackAsync(CancellationToken token = default)
     {
         if (_transaction != null)
             await _transaction.RollbackAsync(token);
     }
 
+    /// <summary>
+    /// Освобождает ресурсы, используемые экземпляром BaseUnitOfWork
+    /// </summary>
     public void Dispose()
     {
         _transaction?.Dispose();
@@ -84,18 +114,34 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>
+    /// Сохраняет все изменения в базе данных
+    /// </summary>
+    /// <param name="hardDelete">Если true, выполняется физическое удаление вместо мягкого</param>
     public void SaveChanges(bool hardDelete = false)
     {
         ProcessEntityOnSave(hardDelete);
         Context.SaveChanges();
     }
 
+    /// <summary>
+    /// Асинхронно сохраняет все изменения в базе данных
+    /// </summary>
+    /// <param name="hardDelete">Если true, выполняется физическое удаление вместо мягкого</param>
+    /// <param name="token">Токен отмены операции</param>
     public async Task SaveChangesAsync(bool hardDelete = false, CancellationToken token = default)
     {
         ProcessEntityOnSave(hardDelete);
         await Context.SaveChangesAsync(token);
     }
 
+    /// <summary>
+    /// Добавляет новую сущность в базу данных
+    /// </summary>
+    /// <typeparam name="T">Тип сущности, реализующий IEntityBase</typeparam>
+    /// <param name="entity">Сущность для добавления</param>
+    /// <param name="saveChanges">Если true, изменения сохраняются сразу</param>
+    /// <returns>Добавленная сущность</returns>
     public T AddEntity<T>(T entity, bool saveChanges = true) where T : class, IEntityBase
     {
         if (entity.Id.IsNullOrEmpty())
@@ -115,6 +161,14 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
         return res.Entity;
     }
 
+    /// <summary>
+    /// Асинхронно добавляет новую сущность в базу данных
+    /// </summary>
+    /// <typeparam name="T">Тип сущности, реализующий IEntityBase</typeparam>
+    /// <param name="entity">Сущность для добавления</param>
+    /// <param name="saveChanges">Если true, изменения сохраняются сразу</param>
+    /// <param name="token">Токен отмены операции</param>
+    /// <returns>Добавленная сущность</returns>
     public async Task<T> AddEntityAsync<T>(T entity, bool saveChanges = true, CancellationToken token = default) where T : class, IEntityBase
     {
         ArgumentNullException.ThrowIfNull(entity);
@@ -136,6 +190,13 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
         return res.Entity;
     }
 
+    /// <summary>
+    /// Удаляет сущность из базы данных
+    /// </summary>
+    /// <typeparam name="T">Тип сущности, реализующий IEntityBase</typeparam>
+    /// <param name="entity">Сущность для удаления</param>
+    /// <param name="hardDelete">Если true, выполняется физическое удаление вместо мягкого</param>
+    /// <param name="saveChanges">Если true, изменения сохраняются сразу</param>
     public void Delete<T>(T entity, bool hardDelete = false, bool saveChanges = true) where T : class, IEntityBase
     {
         Context.Entry(entity).State = EntityState.Deleted;
@@ -143,6 +204,14 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
             SaveChanges(hardDelete);
     }
 
+    /// <summary>
+    /// Асинхронно удаляет сущность из базы данных
+    /// </summary>
+    /// <typeparam name="T">Тип сущности, реализующий IEntityBase</typeparam>
+    /// <param name="entity">Сущность для удаления</param>
+    /// <param name="hardDelete">Если true, выполняется физическое удаление вместо мягкого</param>
+    /// <param name="saveChanges">Если true, изменения сохраняются сразу</param>
+    /// <param name="token">Токен отмены операции</param>
     public async Task DeleteAsync<T>(T entity, bool hardDelete = false, bool saveChanges = true, CancellationToken token = default) where T : class, IEntityBase
     {
         Context.Entry(entity).State = EntityState.Deleted;
@@ -150,6 +219,13 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
             await SaveChangesAsync(hardDelete, token);
     }
 
+    /// <summary>
+    /// Удаляет список сущностей из базы данных
+    /// </summary>
+    /// <typeparam name="T">Тип сущности, реализующий IEntityBase</typeparam>
+    /// <param name="entities">Список сущностей для удаления</param>
+    /// <param name="hardDelete">Если true, выполняется физическое удаление вместо мягкого</param>
+    /// <param name="saveChanges">Если true, изменения сохраняются сразу</param>
     public void DeleteList<T>(IEnumerable<T> entities, bool hardDelete = false, bool saveChanges = true) where T : class, IEntityBase
     {
         foreach (var entity in entities)
@@ -162,6 +238,14 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
             SaveChanges(hardDelete);
     }
 
+    /// <summary>
+    /// Асинхронно удаляет список сущностей из базы данных
+    /// </summary>
+    /// <typeparam name="T">Тип сущности, реализующий IEntityBase</typeparam>
+    /// <param name="entities">Список сущностей для удаления</param>
+    /// <param name="hardDelete">Если true, выполняется физическое удаление вместо мягкого</param>
+    /// <param name="saveChanges">Если true, изменения сохраняются сразу</param>
+    /// <param name="token">Токен отмены операции</param>
     public async Task DeleteListAsync<T>(IEnumerable<T> entities, bool hardDelete = false, bool saveChanges = true, CancellationToken token = default) where T : class, IEntityBase
     {
         foreach (var entity in entities)
@@ -174,11 +258,22 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
             await SaveChangesAsync(hardDelete, token);
     }
 
+    /// <summary>
+    /// Получает набор сущностей указанного типа
+    /// </summary>
+    /// <typeparam name="T">Тип сущности, реализующий IEntityBase</typeparam>
+    /// <returns>Набор сущностей указанного типа</returns>
     public DbSet<T> GetSet<T>() where T : class, IEntityBase
     {
         return Context.Set<T>();
     }
 
+    /// <summary>
+    /// Получает запрос для работы с сущностями указанного типа
+    /// </summary>
+    /// <typeparam name="T">Тип сущности, реализующий IEntityBase</typeparam>
+    /// <param name="withDeleted">Если true, включаются удаленные сущности (для мягкого удаления)</param>
+    /// <returns>Запрос для работы с сущностями</returns>
     public IQueryable<T> Query<T>(bool withDeleted = false) where T : class, IEntityBase
     {
         if (withDeleted && typeof(T) is ISoftDeleteEntity)
@@ -189,6 +284,10 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
         return GetSet<T>().AsQueryable();
     }
 
+    /// <summary>
+    /// Обрабатывает сущности перед сохранением: устанавливает дату создания, обновляет метку времени, обрабатывает мягкое удаление
+    /// </summary>
+    /// <param name="hardDelete">Если true, выполняется физическое удаление вместо мягкого</param>
     protected virtual void ProcessEntityOnSave(bool hardDelete)
     {
         var states = new [] { EntityState.Added, EntityState.Modified };
@@ -236,6 +335,10 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
         }
     }
 
+    /// <summary>
+    /// Возвращает текущую дату и время. Может быть переопределен в наследниках для использования другой логики определения времени
+    /// </summary>
+    /// <returns>Текущая дата и время</returns>
     protected virtual DateTimeOffset SetDateTimeNow()
     {
         return DateTimeOffset.Now;
