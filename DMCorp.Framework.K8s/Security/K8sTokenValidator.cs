@@ -1,6 +1,4 @@
-using System.Text;
 using DMCorp.Framework.Basics.Security;
-using DMCorp.Framework.Basics.Settings;
 using DMCorp.Framework.K8s.Helpers;
 using Microsoft.IdentityModel.Tokens;
 
@@ -19,9 +17,15 @@ public class K8sTokenValidator(ISecurityTokenValidator securityTokenValidator) :
         return new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = "https://kubernetes.default.svc",
+            ValidIssuer = K8sEnvironmentVariablesHelper.K8sJWTAuthority,
+
             ValidateAudience = true,
             ValidAudience = K8sEnvironmentVariablesHelper.K8sTokenAudience,
+
+            ValidateLifetime = true,
+            ClockSkew = TimeSpan.FromSeconds(30),
+            ValidateIssuerSigningKey = true,
+            NameClaimType = "sub"
         };
     }
 

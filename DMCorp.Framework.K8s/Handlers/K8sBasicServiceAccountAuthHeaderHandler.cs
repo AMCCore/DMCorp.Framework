@@ -40,7 +40,7 @@ public class K8sBasicServiceAccountAuthHeaderHandler(IMemoryCache? cache = defau
             return _token;
         }
 
-        var k8s_client = K8sClientHelper.GetClient();
+        using var k8s_client = K8sClientHelper.GetClient();
         var k8s_request = new Authenticationv1TokenRequest
         {
             Spec = new V1TokenRequestSpec
