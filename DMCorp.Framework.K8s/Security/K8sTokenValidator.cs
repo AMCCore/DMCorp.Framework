@@ -7,8 +7,11 @@ namespace DMCorp.Framework.K8s.Security;
 /// <summary>
 /// Валидатор токенов для аутентификации через Kubernetes Service Account
 /// </summary>
-public class K8sTokenValidator(ISecurityTokenValidator securityTokenValidator) : BasicTokenValidator(securityTokenValidator)
+public class K8sTokenValidator(ISecurityTokenValidator securityTokenValidator, IK8sJwksProvider jwksProvider) : BasicTokenValidator(securityTokenValidator)
 {
+    /// <summary>
+    /// Создает параметры валидации токена для Kubernetes Service Account
+    /// </summary>
     /// <summary>
     /// Создает параметры валидации токена для Kubernetes Service Account
     /// </summary>
@@ -25,12 +28,21 @@ public class K8sTokenValidator(ISecurityTokenValidator securityTokenValidator) :
             ValidateLifetime = true,
             ClockSkew = TimeSpan.FromSeconds(30),
             ValidateIssuerSigningKey = true,
-            NameClaimType = "sub"
+            NameClaimType = "sub",
         };
     }
 
     /// <summary>
     /// Возвращает параметры валидации токена Kubernetes
     /// </summary>
-    protected override TokenValidationParameters GetTokenValidationParameters() => GetK8sTokenValidationParameters();
+    /// <summary>
+    /// Возвращает параметры валидации токена Kubernetes
+    /// </summary>
+    protected override TokenValidationParameters GetTokenValidationParameters()
+    {
+        var res = GetK8sTokenValidationParameters();
+        var keys = jwksProvider.GetJwksAsync().GetAwaiter().GetResult();
+        res.IssuerSigningKeys = keys.GetSigningKeys();
+        return res;
+    }
 }
