@@ -22,4 +22,6 @@ public static class K8sEnvironmentVariablesHelper
     /// </summary>
     /// <exception cref="ArgumentNullException">Выбрасывается, если переменная окружения K8sTokenAudience не установлена</exception>
     public static string K8sTokenAudience => Environment.GetEnvironmentVariable(nameof(K8sTokenAudience)) ?? throw new ArgumentNullException(nameof(K8sTokenAudience));
+
+    public static string K8sJWTAuthority = Environment.GetEnvironmentVariable(nameof(K8sJWTAuthority)) ?? "https://kubernetes.default.svc";
 }
