@@ -15,10 +15,10 @@
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<RepositoryUrl>https://github.com/AMCCore/DMCorp.Framework</RepositoryUrl>
 		<PackageTags>c# .net k8s kubernetes</PackageTags>
-		<Version>1.1.1.0</Version>
+		<Version>1.1.2.0</Version>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<AssemblyVersion>1.1.1.0</AssemblyVersion>
-		<FileVersion>1.1.1.0</FileVersion>
+		<AssemblyVersion>1.1.2.0</AssemblyVersion>
+		<FileVersion>1.1.2.0</FileVersion>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -30,7 +30,7 @@
 			<PackagePath>\</PackagePath>
 			<Pack>True</Pack>
 		</None>
-		<None Include="README.md">
+		<None Include="..\README.md">
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
