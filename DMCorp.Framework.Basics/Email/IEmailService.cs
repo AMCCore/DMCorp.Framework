@@ -10,7 +10,7 @@ public interface IEmailService
     /// <summary>
     /// Настройки сервиса электронной почты
     /// </summary>
-    EmailServiceSettings Settings { get; }
+    IEmailServiceSettings Settings { get; }
 
     /// <summary>
     /// Асинхронно отправляет электронное письмо
