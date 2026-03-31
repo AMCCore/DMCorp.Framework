@@ -12,6 +12,8 @@ public class JwtBearerOptionsHelper(IK8sJwksProvider jwksProvider, ILogger<JwtBe
 
     public void Configure(string? name, JwtBearerOptions options)
     {
+        logger?.LogInformation("Configuring JwtBearerOptions for scheme: {SchemeName}", name);
+
         if (name != JwtBearerDefaults.AuthenticationScheme)
             return;
 

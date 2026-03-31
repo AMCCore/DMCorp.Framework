@@ -1,6 +1,8 @@
+using System.Net.Http.Headers;
 using DMCorp.Framework.K8s.Helpers;
 using k8s;
 using k8s.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 
@@ -33,11 +35,20 @@ public class K8sBasicServiceAccountAuthHeaderHandler(IMemoryCache? cache = defau
     /// </summary>
     /// <param name="token">Токен отмены операции</param>
     /// <returns>Строка токена авторизации</returns>
-    private async Task<string> GetK8sToken(CancellationToken token = default)
+    protected async Task<string> GetK8sToken(CancellationToken token = default)
     {
-        if ((_cache?.TryGetValue(TokenCacheKey, out string? _token) ?? false) && (_cache?.TryGetValue(TokenCacheExpirationKey, out DateTimeOffset? _tokenExpires) ?? false) && !string.IsNullOrWhiteSpace(_token) && _tokenExpires < DateTimeOffset.UtcNow )
+        if ((_cache?.TryGetValue(TokenCacheKey, out string? _token) ?? false))
         {
-            return _token;
+            if ((_cache?.TryGetValue(TokenCacheExpirationKey, out DateTimeOffset? _tokenExpires) ?? false))
+            {
+                if (!string.IsNullOrWhiteSpace(_token))
+                {
+                    if (DateTimeOffset.UtcNow < _tokenExpires)
+                    {
+                        return _token;
+                    }
+                }
+            }
         }
 
         using var k8s_client = K8sClientHelper.GetClient();
@@ -53,9 +64,20 @@ public class K8sBasicServiceAccountAuthHeaderHandler(IMemoryCache? cache = defau
         var jtoken = await k8s_client.CreateNamespacedServiceAccountTokenAsync(k8s_request, K8sEnvironmentVariablesHelper.K8sServiceAccountName, K8sEnvironmentVariablesHelper.K8sServiceAccountNamespace, cancellationToken: token);
 
         _cache?.Set(TokenCacheKey, jtoken.Status.Token, TimeSpan.FromSeconds(k8s_request.Spec.ExpirationSeconds.Value - 60));
-        DateTimeOffset utcTime1 = DateTime.SpecifyKind(jtoken.Status.ExpirationTimestamp, DateTimeKind.Utc);
-        _cache?.Set(TokenCacheExpirationKey, utcTime1, TimeSpan.FromSeconds(k8s_request.Spec.ExpirationSeconds.Value - 60));
+        _cache?.Set(TokenCacheExpirationKey, DateTimeOffset.UtcNow.AddSeconds(k8s_request.Spec.ExpirationSeconds.Value), TimeSpan.FromSeconds(k8s_request.Spec.ExpirationSeconds.Value - 60));
 
         return jtoken.Status.Token;
+    }
+
+    protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken = default)
+    {
+        var token = await GetK8sToken(cancellationToken);
+
+        //potentially refresh token here if it has expired etc.
+        request.Headers.Authorization = new AuthenticationHeaderValue(JwtBearerDefaults.AuthenticationScheme, token);
+        //todo: add tenant header if needed
+        //request.Headers.Add("X-Tenant-Id", tenantProvider.GetTenantId());
+
+        return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
     }
 }
