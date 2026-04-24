@@ -29,7 +29,7 @@ public class GuidEnumConverterExtension<TEnum>(ConverterMappingHints? mappingHin
     /// <param name="value">GUID значение для поиска</param>
     /// <returns>Элемент перечисления, соответствующий указанному GUID</returns>
     /// <exception cref="InvalidOperationException">Выбрасывается, если не найден элемент перечисления с указанным GUID</exception>
-    public static T ConvertGuidToEnum<T>(Guid value) where T : Enum
+    private static T ConvertGuidToEnum<T>(Guid value) where T : Enum
     {
         var names = Enum.GetNames(typeof(T));
         foreach (var name in names)
@@ -44,5 +44,10 @@ public class GuidEnumConverterExtension<TEnum>(ConverterMappingHints? mappingHin
         }
 
         throw new InvalidOperationException();
+    }
+
+    internal static TEnum ConvertGuidToEnum(Guid value)
+    {
+        return ConvertGuidToEnum<TEnum>(value);
     }
 }

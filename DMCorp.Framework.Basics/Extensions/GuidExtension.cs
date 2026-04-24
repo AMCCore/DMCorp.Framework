@@ -24,4 +24,9 @@ public static class GuidExtension
     {
         return g == Guid.Empty;
     }
+
+    public static TEnum GetEnum<TEnum>(this Guid g) where TEnum : Enum
+    {
+        return GuidEnumConverterExtension<TEnum>.ConvertGuidToEnum(g);
+    }
 }
