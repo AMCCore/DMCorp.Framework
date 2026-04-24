@@ -16,6 +16,65 @@ on:
 #     - 'v[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
+  checkout:
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+      - name: Upload repo
+        uses: actions/upload-artifact@v6
+        with:
+          name: repo
+          path: .
+  
+  build:
+    needs: checkout
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Download repo
+        uses: actions/download-artifact@v7
+        with:
+          name: repo
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build -c Release --no-restore
+
+      - name: Pack NuGet package
+        run: dotnet pack -c Release --no-build --output OutNuGet
+
+      - name: Upload repo
+        uses: actions/upload-artifact@v6
+        with:
+          name: repo-build
+          path: .
+
+  push:
+    needs: build
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Download repo
+        uses: actions/download-artifact@v7
+        with:
+          name: repo
+      - name: Push to NuGet
+        run: |
+            cd OutNuGet
+            dotnet nuget push *.nupkg --api-key ${{ secrets.NUGET_AUTH_TOKEN }} --source https://api.nuget.org/v3/index.json
+
   build-and-publish:
     permissions:
       contents: read
@@ -27,7 +86,7 @@ jobs:
 #              echo $"{{ github.ref }}"
 #              exit -1
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: 9.0.x
