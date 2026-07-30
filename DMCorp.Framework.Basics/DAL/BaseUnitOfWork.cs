@@ -341,6 +341,6 @@ public abstract class BaseUnitOfWork<C>(C context) : IUnitOfWork where C : DbCon
     /// <returns>Текущая дата и время</returns>
     protected virtual DateTimeOffset SetDateTimeNow()
     {
-        return DateTimeOffset.Now;
+        return DateTimeOffset.UtcNow;
     }
 }
